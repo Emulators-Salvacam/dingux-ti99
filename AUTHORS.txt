@@ -1,0 +1,10 @@
+TI99sim : TI99/4 Emulator
+
+  Marc Rousseau  (see http://www.mrousseau.org/programs/ti99sim/)
+
+PSP-Ti99    : Porting on PSP
+Gp2X-Ti99   : Porting on GP2X F100
+Wiz-Ti99    : Porting on GP2X Wiz
+Dingux-Ti99 : Porting on Dingoo/Dingux
+
+  Ludovic Jacomme alias Zx   (see http://zx81.zx81.free.fr)

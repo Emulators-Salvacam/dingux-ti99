@@ -1,0 +1,118 @@
+#
+# Copyright (C) 2009 Ludovic Jacomme (ludovic.jacomme@gmail.com)
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+TARGET = pspti99
+PSPSDK = $(shell psp-config --pspsdk-path)
+PSPBIN = $(shell psp-config --psp-prefix)/bin
+SDL_CONFIG = $(PSPBIN)/sdl-config
+OBJS = \
+psp_main.o \
+psp_battery.o \
+psp_danzeff.o \
+psp_fmgr.o \
+psp_ti99.o \
+psp_font.o \
+psp_irkeyb.o \
+psp_kbd.o \
+psp_menu.o \
+psp_menu_help.o \
+psp_menu_kbd.o \
+psp_menu_set.o \
+psp_menu_cheat.o \
+psp_menu_list.o \
+psp_menu_joy.o \
+psp_editor.o \
+psp_irkeyb.o \
+psp_irda.o \
+psp_joy.o \
+psp_sdl.o \
+psp_gu.o \
+global.o \
+sdl/bitmap.o \
+sdl/main.o \
+sdl/ti994a-sdl.o \
+sdl/tms9918a-sdl.o \
+sdl/tms9919-sdl.o \
+core/arcfs.o \
+core/cartridge.o \
+core/cBaseObject.o \
+core/compress.o \
+core/decodelzw.o \
+core/device.o \
+core/disassemble.o \
+core/diskfs.o \
+core/diskio.o \
+core/fileio.o \
+core/fs.o \
+core/opcodes.o \
+core/option.o \
+core/pseudofs.o \
+core/support.o \
+core/ti994a.o \
+core/ti-disk.o \
+core/tms5220.o \
+core/tms9900.o \
+core/tms9901.o \
+core/tms9918a.o \
+core/tms9919.o
+
+DEFAULT_CFLAGS = $(shell $(SDL_CONFIG) --cflags)
+
+PSP_FW_VERSION=303
+PSPTI99_VERSION=1.1.0-fw5x
+
+MORE_CFLAGS = -Iinclude -DPSP \
+-ffast-math -fomit-frame-pointer \
+-DPSPFW30X \
+-DPSPTI99_VERSION=\"$(PSPTI99_VERSION)\" \
+-DUSE_IRDA_JOY -DUSE_PSP_IRKEYB \
+-DNO_STDIO_REDIRECT
+
+OPTIM_CFLAGS= -O2
+
+CFLAGS = $(DEFAULT_CFLAGS) $(MORE_CFLAGS)
+CXXFLAGS = $(DEFAULT_CFLAGS) $(MORE_CFLAGS) -fno-exceptions -fno-rtti
+
+LIBS += -lpspirkeyb -lpsppower -lSDL_image -lSDL -lpng -ljpeg -lpspaudio -lpspgu -lpsphprm -lz -lm -lstdc++
+
+BUILD_PRX=1
+
+EXTRA_TARGETS= EBOOT.PBP
+PSP_EBOOT_TITLE= PSPTI99-v$(PSPTI99_VERSION)
+PSP_EBOOT_ICON=pspti99.png
+PSP_EBOOT_SND0=pspti99.at3
+PSP_EBOOT_PIC1=pspti99-pic.png
+
+include $(PSPSDK)/lib/build.mak
+
+all: EBOOT.PBP
+
+.c.o:
+	$(CC) $(CFLAGS) $(OPTIM_CFLAGS) -c -o $@ $<
+
+psp_gu.o : psp_gu.c
+	$(CC) -c $< $(CFLAGS) -O0 -o $@
+
+install: all
+	@mkdir -p /media/usbdisk/psp/game5XX/pspti99/
+	cp EBOOT.PBP /media/usbdisk/psp/game5XX/pspti99/
+
+realclean:
+	/bin/rm -f $(OBJS) EBOOT.PBP PARAM.SFO
+
+ctags:
+	ctags *[ch] 
